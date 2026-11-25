@@ -106,7 +106,7 @@ export const RELEASE_HISTORY: ReleaseNote[] = [
         items: [
           "3D animated knot viewer with real-time physics (9 knots)",
           "Android app with favorites, sharing via QR, dark/light theme",
-          "New tab showing recently added knots, with "New" badge",
+          'New tab showing recently added knots, with "New" badge',
           "In-app update checker",
         ],
       },
