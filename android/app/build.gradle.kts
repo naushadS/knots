@@ -1,0 +1,99 @@
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "com.behnamazimi.knots"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.behnamazimi.knots"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "0.1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Release signing: reads from environment variables injected by CI (or a local keystore.properties).
+    // Falls back to debug signing when the env vars are absent (local dev builds).
+    val keystoreBase64 = System.getenv("KEYSTORE_BASE64")
+    val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+    val keyAlias = System.getenv("KEY_ALIAS")
+    val keyPassword = System.getenv("KEY_PASSWORD")
+    val hasReleaseKey = listOf(keystoreBase64, keystorePassword, keyAlias, keyPassword).all { !it.isNullOrBlank() }
+
+    if (hasReleaseKey) {
+        val keystoreFile = layout.buildDirectory.file("knots-release.jks").get().asFile
+        keystoreFile.parentFile.mkdirs()
+        keystoreFile.writeBytes(java.util.Base64.getDecoder().decode(keystoreBase64))
+
+        signingConfigs {
+            create("release") {
+                storeFile = keystoreFile
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = if (hasReleaseKey) signingConfigs.getByName("release")
+                            else signingConfigs.getByName("debug")
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.webkit:webkit:1.12.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
+}
+
+val copyWebAssets = tasks.register<Sync>("copyWebAssets") {
+    description = "Copies knots web client production build into Android assets"
+    val webBuildDir = rootProject.file("../build/client")
+    from(webBuildDir)
+    into(layout.projectDirectory.dir("src/main/assets"))
+}
+
+tasks.named("preBuild") {
+    dependsOn(copyWebAssets)
+}
+
