@@ -1,6 +1,6 @@
 import { platform } from "./platformBridge";
 
-export const APP_VERSION = "0.1.0";
+export const APP_VERSION = "0.1.1";
 
 export function getInstalledVersion(): string {
   const nativeVer = platform.getAppVersion();

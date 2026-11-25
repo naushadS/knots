@@ -96,6 +96,21 @@ export function parseMarkdownReleaseSections(markdown: string): ChangelogSection
 
 export const RELEASE_HISTORY: ReleaseNote[] = [
   {
+    version: "v0.1.1",
+    title: "Test In-App Update",
+    date: "November 2026",
+    sections: [
+      {
+        title: "Improvements",
+        type: "improvements",
+        items: [
+          "Verified in-app update downloading and installation flow",
+          "Connected updater directly to fork release channel",
+        ],
+      },
+    ],
+  },
+  {
     version: "v0.1.0",
     title: "Android App Launch",
     date: "November 2026",
