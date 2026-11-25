@@ -17,19 +17,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Release signing: reads from environment variables injected by CI (or a local keystore.properties).
-    // Falls back to debug signing when the env vars are absent (local dev builds).
-    val keystoreBase64 = System.getenv("KEYSTORE_BASE64")
+    // Release signing: checks for knots-release.jks (decoded by CI or provided locally)
+    // and passwords in env. Falls back to debug signing when absent.
+    val keystoreFile = file("knots-release.jks")
     val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
     val keyAlias = System.getenv("KEY_ALIAS")
     val keyPassword = System.getenv("KEY_PASSWORD")
-    val hasReleaseKey = listOf(keystoreBase64, keystorePassword, keyAlias, keyPassword).all { !it.isNullOrBlank() }
+    val hasReleaseKey = keystoreFile.exists() && listOf(keystorePassword, keyAlias, keyPassword).all { !it.isNullOrBlank() }
 
     if (hasReleaseKey) {
-        val keystoreFile = layout.buildDirectory.file("knots-release.jks").get().asFile
-        keystoreFile.parentFile.mkdirs()
-        keystoreFile.writeBytes(java.util.Base64.getDecoder().decode(keystoreBase64))
-
         signingConfigs {
             create("release") {
                 storeFile = keystoreFile
