@@ -49,7 +49,7 @@ export function parseNotesToSections(notes: string): UpdateSection[] {
 }
 
 export async function checkForUpdate(currentVersion: string = APP_VERSION): Promise<UpdateInfo> {
-  const res = await fetch("https://api.github.com/repos/behnamazimi/knots/releases/latest", {
+  const res = await fetch("https://api.github.com/repos/naushadS/knots/releases/latest", {
     headers: { Accept: "application/vnd.github.v3+json" },
   });
   if (!res.ok) {
@@ -59,7 +59,7 @@ export async function checkForUpdate(currentVersion: string = APP_VERSION): Prom
         title: "Current Version",
         notes: "No newer releases found on GitHub.",
         sections: [],
-        releaseUrl: "https://github.com/behnamazimi/knots/releases",
+        releaseUrl: "https://github.com/naushadS/knots/releases",
         apkUrl: null,
         isUpdateAvailable: false,
       };
@@ -81,7 +81,7 @@ export async function checkForUpdate(currentVersion: string = APP_VERSION): Prom
     title: data.name || remoteTag,
     notes,
     sections: parseNotesToSections(notes),
-    releaseUrl: data.html_url || "https://github.com/behnamazimi/knots/releases/latest",
+    releaseUrl: data.html_url || "https://github.com/naushadS/knots/releases/latest",
     apkUrl: apkAsset?.browser_download_url ?? null,
     isUpdateAvailable: remoteTag ? isNewerVersion(remoteTag, currentVersion) : false,
   };

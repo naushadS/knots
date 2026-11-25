@@ -346,7 +346,7 @@ export function SettingsScreen({
         <div className={styles.releaseNoteText}>
           Releases are published directly on{" "}
           <a
-            href="https://github.com/behnamazimi/knots/releases"
+            href="https://github.com/naushadS/knots/releases"
             target="_blank"
             rel="noopener"
             className={styles.releaseLink}
