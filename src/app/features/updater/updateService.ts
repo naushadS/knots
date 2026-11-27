@@ -1,4 +1,5 @@
 import { platform } from "../../shared/platformBridge";
+import { GITHUB_API_LATEST_RELEASE_URL, RELEASES_URL } from "../../shared/site";
 import { APP_VERSION, isNewerVersion } from "../../shared/version";
 
 export interface UpdateSection {
@@ -49,7 +50,7 @@ export function parseNotesToSections(notes: string): UpdateSection[] {
 }
 
 export async function checkForUpdate(currentVersion: string = APP_VERSION): Promise<UpdateInfo> {
-  const res = await fetch("https://api.github.com/repos/naushadS/knots/releases/latest", {
+  const res = await fetch(GITHUB_API_LATEST_RELEASE_URL, {
     headers: { Accept: "application/vnd.github.v3+json" },
   });
   if (!res.ok) {
@@ -59,7 +60,7 @@ export async function checkForUpdate(currentVersion: string = APP_VERSION): Prom
         title: "Current Version",
         notes: "No newer releases found on GitHub.",
         sections: [],
-        releaseUrl: "https://github.com/naushadS/knots/releases",
+        releaseUrl: RELEASES_URL,
         apkUrl: null,
         isUpdateAvailable: false,
       };
@@ -72,8 +73,7 @@ export async function checkForUpdate(currentVersion: string = APP_VERSION): Prom
   const targetName = isDebug ? "app-debug.apk" : "app-release.apk";
   const assets: Array<{ name: string; browser_download_url: string }> = data.assets || [];
   const apkAsset =
-    assets.find((a) => a.name === targetName) ||
-    assets.find((a) => a.name.endsWith(".apk"));
+    assets.find((a) => a.name === targetName) || assets.find((a) => a.name.endsWith(".apk"));
   const notes = data.body || "";
 
   return {
@@ -81,17 +81,14 @@ export async function checkForUpdate(currentVersion: string = APP_VERSION): Prom
     title: data.name || remoteTag,
     notes,
     sections: parseNotesToSections(notes),
-    releaseUrl: data.html_url || "https://github.com/naushadS/knots/releases/latest",
+    releaseUrl: data.html_url || `${RELEASES_URL}/latest`,
     apkUrl: apkAsset?.browser_download_url ?? null,
     isUpdateAvailable: remoteTag ? isNewerVersion(remoteTag, currentVersion) : false,
   };
 }
 
 export function triggerUpdate(update: UpdateInfo): void {
-  if (update.apkUrl && platform.downloadAndInstallUpdate(update.apkUrl)) {
-    return;
-  }
   if (typeof window !== "undefined") {
-    window.open(update.releaseUrl, "_blank", "noopener");
+    window.open(update.apkUrl || update.releaseUrl, "_blank", "noopener");
   }
 }

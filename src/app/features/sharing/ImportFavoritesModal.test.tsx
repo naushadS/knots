@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import { APP_VERSION } from "../../shared/version";
 import { ImportFavoritesModal } from "./ImportFavoritesModal";
 
 describe("ImportFavoritesModal", () => {
@@ -31,8 +32,8 @@ describe("ImportFavoritesModal", () => {
       />,
     );
 
-    expect(html).toMatch(
-      /Shared from a newer version \(v0\.2\.0, you have v0\.1\.0\)\. 1 knot \(mystery-knot\) requires updating Knots to view, but will still be saved to your favorites\./i,
+    expect(html).toContain(
+      `Shared from a newer version (v0.2.0, you have v${APP_VERSION}). 1 knot (mystery-knot) requires updating Knots to view, but will still be saved to your favorites.`,
     );
   });
 });

@@ -58,9 +58,9 @@ describe("updateService", () => {
     });
   });
 
-  it("triggerUpdate passes only apkUrl to KnotsNative.downloadAndInstallUpdate", () => {
-    const downloadAndInstallUpdate = vi.fn();
-    window.KnotsNative = { downloadAndInstallUpdate };
+  it("triggerUpdate opens apkUrl in the system browser when available", () => {
+    const openSpy = vi.fn();
+    window.open = openSpy;
 
     const update: UpdateInfo = {
       version: "v99.0.0",
@@ -72,9 +72,11 @@ describe("updateService", () => {
     };
 
     triggerUpdate(update);
-    expect(downloadAndInstallUpdate).toHaveBeenCalledTimes(1);
-    expect(downloadAndInstallUpdate).toHaveBeenCalledWith(
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy).toHaveBeenCalledWith(
       "https://example.com/app-release.apk",
+      "_blank",
+      "noopener",
     );
   });
 

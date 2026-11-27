@@ -13,7 +13,7 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
-import { SITE_NAME } from "../shared/site";
+import { RELEASES_URL, SITE_NAME } from "../shared/site";
 import { getInstalledVersion } from "../shared/version";
 import {
   ChangelogSheet,
@@ -62,11 +62,9 @@ export function SettingsScreen({
     }
     return "idle";
   });
-  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(
-    () => initialUpdateInfo ?? null,
-  );
-  const [expandedNotes, setExpandedNotes] = useState(
-    () => Boolean(initialUpdateInfo?.isUpdateAvailable),
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(() => initialUpdateInfo ?? null);
+  const [expandedNotes, setExpandedNotes] = useState(() =>
+    Boolean(initialUpdateInfo?.isUpdateAvailable),
   );
   const [prevInitialUpdateInfo, setPrevInitialUpdateInfo] = useState(initialUpdateInfo);
   if (initialUpdateInfo && initialUpdateInfo !== prevInitialUpdateInfo) {
@@ -220,9 +218,9 @@ export function SettingsScreen({
                 {updateStatus !== "update-available" && (
                   <span className={styles.optionDesc}>
                     {updateStatus === "checking"
-                      ? "Checking for new releases..."
+                      ? "Checking for updates..."
                       : updateStatus === "up-to-date"
-                        ? `You're on the latest version (v${currentVersion})`
+                        ? `Up to date (v${currentVersion})`
                         : updateStatus === "error"
                           ? "Could not check for updates"
                           : "Tap to check for new releases"}
@@ -345,21 +343,14 @@ export function SettingsScreen({
 
         <div className={styles.releaseNoteText}>
           Releases are published directly on{" "}
-          <a
-            href="https://github.com/naushadS/knots/releases"
-            target="_blank"
-            rel="noopener"
-            className={styles.releaseLink}
-          >
+          <a href={RELEASES_URL} target="_blank" rel="noopener" className={styles.releaseLink}>
             GitHub Releases <ExternalLink size={11} className={styles.extIcon} />
           </a>
           .
         </div>
       </section>
 
-      {showChangelog && (
-        <ChangelogSheet onClose={() => setShowChangelog(false)} />
-      )}
+      {showChangelog && <ChangelogSheet onClose={() => setShowChangelog(false)} />}
 
       <section className={styles.section}>
         <div className={styles.sectionTitle}>Appearance</div>

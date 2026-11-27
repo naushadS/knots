@@ -7,12 +7,24 @@ android {
     namespace = "com.behnamazimi.knots"
     compileSdk = 35
 
+    val resolvedVersionName = System.getenv("APP_VERSION")
+        ?.removePrefix("v")
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+        ?: "0.1.1"
+    val semverParts = resolvedVersionName.split(".").map { it.toIntOrNull() ?: 0 }
+    val resolvedVersionCode = (
+        (semverParts.getOrElse(0) { 0 } * 10000) +
+            (semverParts.getOrElse(1) { 0 } * 100) +
+            semverParts.getOrElse(2) { 0 }
+        ).coerceAtLeast(2)
+
     defaultConfig {
         applicationId = "com.behnamazimi.knots"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = resolvedVersionCode
+        versionName = resolvedVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -23,7 +23,8 @@ export function mapCategoryType(title: string): ChangelogCategoryType {
   const lower = title.toLowerCase();
   if (lower.includes("feature")) return "features";
   if (lower.includes("fix") || lower.includes("bug")) return "fixes";
-  if (lower.includes("improve") || lower.includes("perf") || lower.includes("refactor")) return "improvements";
+  if (lower.includes("improve") || lower.includes("perf") || lower.includes("refactor"))
+    return "improvements";
   if (lower.includes("announce")) return "announcements";
   return "other";
 }
@@ -105,7 +106,7 @@ export const RELEASE_HISTORY: ReleaseNote[] = [
         type: "improvements",
         items: [
           "Verified in-app update downloading and installation flow",
-          "Connected updater directly to fork release channel",
+          "Connected in-app updater to GitHub Releases",
         ],
       },
     ],
@@ -128,9 +129,7 @@ export const RELEASE_HISTORY: ReleaseNote[] = [
       {
         title: "Improvements",
         type: "improvements",
-        items: [
-          "Faster rope texture loading with render caching",
-        ],
+        items: ["Faster rope texture loading with render caching"],
       },
     ],
   },
