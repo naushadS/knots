@@ -74,6 +74,49 @@
   </tr>
 </table>
 
+<details>
+<summary>More screenshots (Maximized Viewer, New Tab, Favorites, Share &amp; Import)</summary>
+
+<table>
+  <tr>
+    <th colspan="2" align="center">3D Viewer — Maximized Mode (Light &amp; Dark)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/app_knot_maximized_light.png" width="250" alt="3D Knot viewer maximized (Light)" /></td>
+    <td align="center"><img src="docs/screenshots/app_knot_maximized_dark.png" width="250" alt="3D Knot viewer maximized (Dark)" /></td>
+  </tr>
+  <tr>
+    <th colspan="2" align="center">New Knots Tab (Light &amp; Dark)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/app_new_light.png" width="250" alt="New Knots tab (Light)" /></td>
+    <td align="center"><img src="docs/screenshots/app_new_dark.png" width="250" alt="New Knots tab (Dark)" /></td>
+  </tr>
+  <tr>
+    <th colspan="2" align="center">Favorites (Light &amp; Dark)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/app_favorites_light.png" width="250" alt="Favorites tab (Light)" /></td>
+    <td align="center"><img src="docs/screenshots/app_favorites_dark.png" width="250" alt="Favorites tab (Dark)" /></td>
+  </tr>
+  <tr>
+    <th colspan="2" align="center">Share Favorites — QR &amp; Link (Light &amp; Dark)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/app_share_light.png" width="250" alt="Share Favorites sheet (Light)" /></td>
+    <td align="center"><img src="docs/screenshots/app_share_dark.png" width="250" alt="Share Favorites sheet (Dark)" /></td>
+  </tr>
+  <tr>
+    <th colspan="2" align="center">Import Favorites (Light &amp; Dark)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/app_import_light.png" width="250" alt="Import Favorites sheet (Light)" /></td>
+    <td align="center"><img src="docs/screenshots/app_import_dark.png" width="250" alt="Import Favorites sheet (Dark)" /></td>
+  </tr>
+</table>
+
+</details>
+
 ## The stargazer rope
 
 Every GitHub star ties a knot. Star the repo and your face joins the rope.
