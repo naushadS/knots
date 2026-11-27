@@ -193,7 +193,9 @@ export function ChangelogSheet({ onClose }: ChangelogSheetProps) {
                 <span className={styles.versionTag}>{rel.version}</span>
                 <span className={styles.releaseDate}>{rel.date}</span>
               </div>
-              <h3 className={styles.releaseTitle}>{rel.title}</h3>
+              {rel.title && rel.title !== rel.version && (
+                <h3 className={styles.releaseTitle}>{rel.title}</h3>
+              )}
 
               {rel.sections && rel.sections.length > 0 ? (
                 <UpdateSectionsList sections={rel.sections} />

@@ -1,3 +1,4 @@
+import { parseMarkdownReleaseSections } from "../../shared/changelog";
 import { platform } from "../../shared/platformBridge";
 import { GITHUB_API_LATEST_RELEASE_URL, RELEASES_URL } from "../../shared/site";
 import { APP_VERSION, isNewerVersion } from "../../shared/version";
@@ -19,34 +20,7 @@ export interface UpdateInfo {
 }
 
 export function parseNotesToSections(notes: string): UpdateSection[] {
-  const sections: UpdateSection[] = [];
-  let currentSection: UpdateSection | null = null;
-
-  for (const line of notes.split("\n")) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("###") || trimmed.startsWith("##")) {
-      const title = trimmed.replace(/^#+\s*/, "");
-      const lower = title.toLowerCase();
-      let type: UpdateSection["type"] = "other";
-      if (lower.includes("feature")) type = "features";
-      else if (lower.includes("improvement")) type = "improvements";
-      else if (lower.includes("fix") || lower.includes("bug")) type = "fixes";
-      else if (lower.includes("announcement")) type = "announcements";
-
-      currentSection = { type, title, items: [] };
-      sections.push(currentSection);
-    } else if (trimmed.startsWith("*") || trimmed.startsWith("-")) {
-      const item = trimmed.replace(/^[*-\s]+/, "").trim();
-      if (item) {
-        if (!currentSection) {
-          currentSection = { type: "features", title: "Changes", items: [] };
-          sections.push(currentSection);
-        }
-        currentSection.items.push(item);
-      }
-    }
-  }
-  return sections;
+  return parseMarkdownReleaseSections(notes);
 }
 
 export async function checkForUpdate(currentVersion: string = APP_VERSION): Promise<UpdateInfo> {
@@ -89,6 +63,6 @@ export async function checkForUpdate(currentVersion: string = APP_VERSION): Prom
 
 export function triggerUpdate(update: UpdateInfo): void {
   if (typeof window !== "undefined") {
-    window.open(update.apkUrl || update.releaseUrl, "_blank", "noopener");
+    window.open(update.releaseUrl, "_blank", "noopener");
   }
 }

@@ -51,14 +51,20 @@ describe("updateService", () => {
       version: "v99.0.0",
       title: "Release v99.0.0",
       notes: "Release notes",
-      sections: [],
+      sections: [
+        {
+          title: "Improvements",
+          type: "improvements",
+          items: ["Release notes"],
+        },
+      ],
       releaseUrl: "https://github.com/behnamazimi/knots/releases/tag/v99.0.0",
       apkUrl: "https://example.com/app-release.apk",
       isUpdateAvailable: true,
     });
   });
 
-  it("triggerUpdate opens apkUrl in the system browser when available", () => {
+  it("triggerUpdate opens releaseUrl in the system browser", () => {
     const openSpy = vi.fn();
     window.open = openSpy;
 
@@ -74,7 +80,7 @@ describe("updateService", () => {
     triggerUpdate(update);
     expect(openSpy).toHaveBeenCalledTimes(1);
     expect(openSpy).toHaveBeenCalledWith(
-      "https://example.com/app-release.apk",
+      "https://github.com/behnamazimi/knots/releases/tag/v99.0.0",
       "_blank",
       "noopener",
     );
@@ -116,7 +122,7 @@ describe("updateService", () => {
     ].join("\n");
 
     expect(parseNotesToSections(notes)).toEqual([
-      { type: "features", title: "Changes", items: ["Uncategorized bullet"] },
+      { type: "improvements", title: "Improvements", items: ["Uncategorized bullet"] },
       { type: "features", title: "New Features", items: ["Direct APK install"] },
       { type: "improvements", title: "Improvements", items: ["Faster startup"] },
       { type: "fixes", title: "Bug Fixes", items: ["Fixed crash"] },
