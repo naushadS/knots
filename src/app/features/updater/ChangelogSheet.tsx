@@ -1,9 +1,36 @@
 import { useCallback, useRef, useState } from "react";
 import { X } from "lucide-react";
-import { RELEASE_HISTORY } from "../../shared/changelog";
+import {
+  RELEASE_HISTORY,
+  parseMarkdownReleaseSections,
+  type ReleaseNote,
+} from "../../shared/changelog";
 import { useEscapeKey, useMountEffect } from "../../shared/hooks";
+import { GITHUB_API_RELEASES_URL } from "../../shared/site";
 import { UpdateSectionsList } from "./UpdateSectionsList";
 import styles from "./ChangelogSheet.module.css";
+
+const RELEASE_CACHE_KEY = "knots_release_history_cache";
+
+function readCachedReleases(): ReleaseNote[] {
+  try {
+    const raw = localStorage.getItem(RELEASE_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {
+    // ignore storage errors
+  }
+  return RELEASE_HISTORY;
+}
+
+function formatReleaseDate(iso?: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
 
 interface ChangelogSheetProps {
   onClose: () => void;
@@ -19,8 +46,40 @@ export function ChangelogSheet({ onClose }: ChangelogSheetProps) {
 
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useMountEffect(() => () => {
-    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+  const [releases, setReleases] = useState<ReleaseNote[]>(readCachedReleases);
+
+  useMountEffect(() => {
+    let cancelled = false;
+    fetch(GITHUB_API_RELEASES_URL, {
+      headers: { Accept: "application/vnd.github.v3+json" },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || !Array.isArray(data)) return;
+        const mapped: ReleaseNote[] = data
+          .filter((r) => !r.draft && r.tag_name)
+          .map((r) => ({
+            version: String(r.tag_name).trim(),
+            title: String(r.name || r.tag_name).trim(),
+            date: formatReleaseDate(r.published_at),
+            sections: parseMarkdownReleaseSections(r.body || ""),
+          }));
+        if (mapped.length > 0) {
+          setReleases(mapped);
+          try {
+            localStorage.setItem(RELEASE_CACHE_KEY, JSON.stringify(mapped));
+          } catch {
+            // ignore storage errors
+          }
+        }
+      })
+      .catch(() => {
+        // Keep cached or fallback RELEASE_HISTORY when offline
+      });
+    return () => {
+      cancelled = true;
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
   });
 
   const handleClose = useCallback(() => {
@@ -74,8 +133,7 @@ export function ChangelogSheet({ onClose }: ChangelogSheetProps) {
     }
   };
 
-  // Only show changelog for actually installed and released versions
-  const releases = RELEASE_HISTORY;
+  // Populated from cached/live GitHub Releases with RELEASE_HISTORY fallback
 
   const sheetStyle: React.CSSProperties = {};
   if (dragOffset !== null) {

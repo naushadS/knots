@@ -64,7 +64,7 @@ export function parseMarkdownReleaseSections(markdown: string): ChangelogSection
 
   for (const rawLine of lines) {
     const line = rawLine.trim();
-    if (!line) continue;
+    if (!line || line.startsWith("**Full Changelog**:")) continue;
 
     const headingMatch = line.match(/^#{1,4}\s+(.+)$/);
     if (headingMatch) {
@@ -75,7 +75,8 @@ export function parseMarkdownReleaseSections(markdown: string): ChangelogSection
 
     const bulletMatch = line.match(/^[-*•]\s+(.+)$/);
     if (bulletMatch) {
-      currentItems.push(bulletMatch[1].trim());
+      const cleaned = bulletMatch[1].replace(/\s+by\s+@\S+\s+in\s+https?:\/\/\S+$/i, "").trim();
+      if (cleaned) currentItems.push(cleaned);
     } else if (currentTitle) {
       currentItems.push(line);
     } else {
