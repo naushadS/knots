@@ -40,7 +40,8 @@ export function parseMarkdownReleaseSections(markdown: string): ChangelogSection
     ];
   }
 
-  const lines = markdown.split(/\r?\n/);
+  const cleanedMarkdown = markdown.replace(/<!--[\s\S]*?-->/g, "");
+  const lines = cleanedMarkdown.split(/\r?\n/);
   const sections: ChangelogSection[] = [];
   let currentTitle = "";
   let currentItems: string[] = [];
